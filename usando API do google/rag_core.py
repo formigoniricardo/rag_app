@@ -7,7 +7,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.vectorstores import FAISS
-from dia2_carregar_dados import carregar_e_dividir_chunks
+from container2_split_document_in_chunks import carregar_e_dividir_chunks
 
 # Carrega a chave uma vez
 load_dotenv()
@@ -35,7 +35,7 @@ def criar_rag_chain(caminho_dados=None):
         google_api_key=api_key
     )
     vectorstore = FAISS.from_documents(documents=chunks, embedding=embedding_model)
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
     # 3. Criar LLM
     llm = ChatGoogleGenerativeAI(

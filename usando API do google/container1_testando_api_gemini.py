@@ -17,4 +17,3 @@ mensagens = [HumanMessage(content=pergunta)]
 
 for chunk in llm.stream(mensagens):
     print(chunk.content, end='', flush=True)
-

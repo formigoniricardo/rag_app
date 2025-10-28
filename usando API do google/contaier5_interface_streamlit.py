@@ -11,4 +11,4 @@ if "rag_chain" not in st.session_state:
 
 if pergunta:
     resposta = st.session_state.rag_chain.invoke(pergunta)
-    st.write("🤖", resposta)
+    st.write("😁", resposta)
