@@ -7,9 +7,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.vectorstores import FAISS
-from container2_split_document_in_chunks import carregar_e_dividir_chunks
+from make_chunks import carregar_e_dividir_chunks
 
-# Carrega a chave uma vez
+
 load_dotenv()
 raw_api = os.getenv("CHAVE_API_GOOGLE")
 api_key = SecretStr(raw_api) if raw_api else None
@@ -24,29 +24,27 @@ def criar_rag_chain(caminho_dados=None):
     Returns:
         Runnable: cadeia RAG pronta para .invoke(pergunta)
     """
-    # 1. Carregar chunks
+
     if caminho_dados is None:
-        caminho_dados = r"usando API do google\data\dados_empresa.txt"
+        caminho_dados = r"usando API do google/data/wiki_nexus_monitor.txt"
     chunks = carregar_e_dividir_chunks(caminho_dados)
 
-    # 2. Criar embeddings e vector store
     embedding_model = GoogleGenerativeAIEmbeddings(
-        model="models/embedding-001",
+        model="gemini-embedding-001",
         google_api_key=api_key
     )
-    vectorstore = FAISS.from_documents(documents=chunks, embedding=embedding_model)
+    vectorstore = FAISS.from_documents(
+        documents=chunks, embedding=embedding_model)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
-    # 3. Criar LLM
+    # Essa parte e a llm
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",  # ✅ modelo ativo (não 2.5-flash, que pode estar em preview)
+        model="gemini-2.5-flash",
         google_api_key=os.getenv("CHAVE_API_GOOGLE"),
         temperature=0.4
     )
-
-    # 4. Montar prompt e cadeia
     template = """
-Você é um assistente gentil e útil da empresa TechVision Solutions, chamado Lexia.
+Você é um assistente homem, gentil e útil da empresa TechVision Solutions, chamado Ulos.
 Responda com base nas informações a seguir.
 Se não houver dados suficientes, explique isso de forma educada e tente dar um contexto útil.
 
@@ -61,7 +59,7 @@ Resposta:
 
     rag_chain = (
         {"context": retriever, "question": RunnablePassthrough()}
-        | prompt
+        | prompt  # <- Piper
         | llm
         | StrOutputParser()
     )

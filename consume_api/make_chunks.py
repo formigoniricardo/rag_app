@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import os
 
 
-def carregar_e_dividir_chunks(caminho_arquivo="dados_empresa.txt"):
+def carregar_e_dividir_chunks(caminho_arquivo=r"usando API do google/data/wiki_nexus_monitor.txt"):
     """
     Carrega um arquivo .txt e divide em chunks inteligentes.
     Retorna: lista de objetos Document (chunks)

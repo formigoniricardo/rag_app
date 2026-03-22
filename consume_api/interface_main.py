@@ -1,4 +1,4 @@
-# app.py
+# Esse aqui e a barte web
 import streamlit as st
 from rag_core import criar_rag_chain
 

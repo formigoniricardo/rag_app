@@ -1,0 +1,9 @@
+Tem um module no python que vc tem que instalar manualmente
+copia e cola no terminal:
+
+pip install -qU langchain_community faiss-cpu
+
+Outra coisa, para baixar todas as dependencias faz o seguinte
+Ja tem o arquivo requirements.txt, entao faz isso:
+
+python3 -m pip install -r requirements.txt
