@@ -1,13 +1,12 @@
-# rag_core.py
-from dotenv import load_dotenv
-import os
-from pydantic import SecretStr
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from langchain_community.vectorstores import FAISS
-from make_chunks import carregar_e_dividir_chunks
+from langchain_community.vectorstores import PGVector
+# from make_chunks import carregar_e_dividir_chunks
+from dotenv import load_dotenv
+from pydantic import SecretStr
+import os
 
 
 load_dotenv()
@@ -24,17 +23,24 @@ def criar_rag_chain(caminho_dados=None):
     Returns:
         Runnable: cadeia RAG pronta para .invoke(pergunta)
     """
-
+    from make_chunks import carregar_e_dividir_chunks
     if caminho_dados is None:
-        caminho_dados = r"usando API do google/data/wiki_nexus_monitor.txt"
+        caminho_dados = r"consume_api/data/wiki_nexus_monitor.txt"
     chunks = carregar_e_dividir_chunks(caminho_dados)
 
     embedding_model = GoogleGenerativeAIEmbeddings(
         model="gemini-embedding-001",
         google_api_key=api_key
     )
-    vectorstore = FAISS.from_documents(
-        documents=chunks, embedding=embedding_model)
+    connection_string = "postgresql://postgres:senha123@localhost:5432/rag_db"
+
+    vectorstore = PGVector.from_documents(
+        documents=chunks,
+        embedding=embedding_model,
+        connection_string=connection_string,
+        collection_name='documentos',
+        pre_delete_collection=True
+    )
     retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
     # Essa parte e a llm

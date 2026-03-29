@@ -7,3 +7,6 @@ Outra coisa, para baixar todas as dependencias faz o seguinte
 Ja tem o arquivo requirements.txt, entao faz isso:
 
 python3 -m pip install -r requirements.txt
+
+### postgresql client acess
+PGPASSWORD=senha123 psql -h localhost -U postgres -d rag_db
