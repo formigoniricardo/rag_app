@@ -93,3 +93,9 @@ Projeto de RAG (Retrieval-Augmented Generation) com LangChain e Google Gemini. U
 	```
 
 	A interface vai abrir no navegador e consultar os dados já inseridos na tabela `documentos`.
+
+## Preview
+
+
+https://github.com/user-attachments/assets/14e768fb-6761-4c32-b5b6-615ef38699c7
+
