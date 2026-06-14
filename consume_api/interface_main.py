@@ -18,6 +18,10 @@ from rag_core import (
 # ────────────── Página ──────────────
 st.set_page_config(page_title="Oráculo Corporativo", page_icon="🔮", layout="centered")
 
+# ────────────── Estado ──────────────
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 # ────────────── Sidebar ──────────────
 with st.sidebar:
     st.header("⚙️ Configurações")
@@ -54,25 +58,9 @@ with st.sidebar:
         st.success("Base limpa!")
         st.rerun()
 
-    st.divider()
-
-    # Download PDF do histórico
-    if st.session_state.get("messages"):
-        pdf_bytes = gerar_pdf_conversa(st.session_state.messages)
-        st.download_button(
-            label="📥 Baixar conversa em PDF",
-            data=pdf_bytes,
-            file_name="oraculo_historico.pdf",
-            mime="application/pdf",
-        )
-
 # ────────────── Chat principal ──────────────
 st.title("🔮 Oráculo Corporativo")
 st.caption("RAG AI — Pergunte sobre os documentos indexados")
-
-# RF08 — Histórico de mensagens
-if "messages" not in st.session_state:
-    st.session_state.messages = []
 
 # Recria a chain se a temperatura mudou
 if ("rag_chain" not in st.session_state
@@ -119,3 +107,16 @@ if pergunta := st.chat_input("Faça uma pergunta ao Oráculo..."):
         "content": resultado["resposta"],
         "fontes": resultado["fontes"],
     })
+    st.rerun()
+
+# ────────────── Download PDF (após processar mensagens) ──────────────
+if st.session_state.messages:
+    with st.sidebar:
+        st.divider()
+        pdf_bytes = gerar_pdf_conversa(st.session_state.messages)
+        st.download_button(
+            label="📥 Baixar conversa em PDF",
+            data=pdf_bytes,
+            file_name="oraculo_historico.pdf",
+            mime="application/pdf",
+        )
