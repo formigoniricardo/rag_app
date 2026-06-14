@@ -198,7 +198,7 @@ def gerar_pdf_conversa(mensagens: list) -> bytes:
                 pdf.cell(0, 5, linha, new_x="LMARGIN", new_y="NEXT")
             pdf.ln(3)
 
-    return pdf.output()
+    return bytes(pdf.output())
 
 
 def limpar_base():
