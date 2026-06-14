@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: senha123
       POSTGRES_DB: rag_db
     ports:
-      - "5432:5432"
+     # - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
