@@ -21,6 +21,7 @@ load_dotenv()
 
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")
 LLM_MODEL       = os.getenv("LLM_MODEL", "gemini-2.5-flash")
+LLM_FALLBACKS   = os.getenv("LLM_FALLBACKS", "gemini-2.5-flash-lite").split(",")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.4"))
 RAG_TOP_K       = int(os.getenv("RAG_TOP_K", "5"))
 
@@ -229,15 +230,19 @@ def contar_documentos() -> int:
 # ─────────────────────── Cadeia RAG ───────────────────────
 
 class RagChain:
-    """Cadeia RAG: pergunta → embedding → busca vetorial → prompt → LLM → resposta."""
+    """Cadeia RAG: pergunta → embedding → busca vetorial → prompt → LLM → resposta.
+    Se o modelo principal atingir o rate limit, tenta os modelos de fallback."""
 
     def __init__(self, temperatura: float = LLM_TEMPERATURE):
         raw_api = os.getenv("CHAVE_API_GOOGLE")
         api_key = SecretStr(raw_api) if raw_api else None
+        self._raw_api = raw_api
+        self._temperatura = temperatura
 
         self.embedding_model = GoogleGenerativeAIEmbeddings(
             model=EMBEDDING_MODEL, api_key=api_key,
         )
+        self._modelos = [LLM_MODEL] + [m.strip() for m in LLM_FALLBACKS if m.strip()]
         self.llm = ChatGoogleGenerativeAI(
             model=LLM_MODEL,
             google_api_key=raw_api,
@@ -245,6 +250,26 @@ class RagChain:
         )
         self.prompt  = ChatPromptTemplate.from_template(TEMPLATE)
         self.parser  = StrOutputParser()
+
+    def _chamar_llm(self, msgs):
+        """Tenta o modelo principal; se der rate limit, tenta os fallbacks."""
+        for i, modelo in enumerate(self._modelos):
+            try:
+                if i == 0:
+                    llm = self.llm
+                else:
+                    llm = ChatGoogleGenerativeAI(
+                        model=modelo,
+                        google_api_key=self._raw_api,
+                        temperature=self._temperatura,
+                    )
+                return self.parser.invoke(llm.invoke(msgs)), modelo
+            except Exception as e:
+                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    if i < len(self._modelos) - 1:
+                        continue
+                raise
+        raise RuntimeError("Todos os modelos atingiram o rate limit.")
 
     def buscar_documentos(self, pergunta: str, k: int = RAG_TOP_K):
         vetor = _vec(self.embedding_model.embed_query(pergunta))
@@ -275,8 +300,8 @@ class RagChain:
         ) if docs else "Nenhum documento na base de conhecimento.")
 
         msgs = self.prompt.invoke({"context": ctx, "question": pergunta})
-        resp = self.parser.invoke(self.llm.invoke(msgs))
-        return {"resposta": resp, "fontes": docs}
+        resp, modelo_usado = self._chamar_llm(msgs)
+        return {"resposta": resp, "fontes": docs, "modelo": modelo_usado}
 
     def invoke(self, pergunta: str) -> str:
         return self.responder(pergunta)["resposta"]
