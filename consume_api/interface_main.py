@@ -12,14 +12,11 @@ Interface de chat com:
 import streamlit as st
 from rag_core import (
     criar_rag_chain, indexar_arquivo, limpar_base,
-    contar_documentos, gerar_pdf_conversa, garantir_schema,  # <-- Importação adicionada aqui
+    contar_documentos, gerar_pdf_conversa,
 )
 
 # ────────────── Página ──────────────
 st.set_page_config(page_title="Oráculo Corporativo", page_icon="🔮", layout="centered")
-
-# Garante que a extensão pgvector e a tabela existam no banco do Render antes de qualquer operação
-garantir_schema()  # <-- Chamada adicionada aqui
 
 # ────────────── Estado ──────────────
 if "messages" not in st.session_state:
