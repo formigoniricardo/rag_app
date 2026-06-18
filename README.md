@@ -104,7 +104,7 @@ Digite uma pergunta no chat e veja a resposta com as fontes do banco. Use o bot√
 ### 2. Clonar o reposit√≥rio
 
 ```bash
-git clone https://github.com/GabrielMS92/rag_app.git
+git clone https://github.com/formigoniricardo/rag_app.git
 cd rag_app
 ```
 
