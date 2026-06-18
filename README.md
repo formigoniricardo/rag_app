@@ -2,6 +2,16 @@
 
 Sistema de Recuperação Aumentada por Geração (RAG) que transforma documentos estáticos em uma base de conhecimento consultável via chat. Utiliza Google Gemini como LLM, PostgreSQL + pgvector para armazenamento vetorial e Streamlit como interface. Roda inteiramente em containers Docker com Alpine no GitHub Codespaces.
 
+---
+
+## 🌐 Aplicação em Produção
+
+O Oráculo Corporativo já está no ar! Você pode acessar e testar o sistema em tempo real clicando no botão abaixo:
+
+[![Acessar Aplicação](https://img.shields.io/badge/_Acessar_Aplicação-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://rag-app-zg4k.onrender.com)
+
+---
+
 ## Tecnologias
 
 - **Python 3.12** · **Streamlit** · **Google Gemini** (embeddings + LLM)
