@@ -36,13 +36,15 @@ Uma chave da API Google Gemini — obtenha grátis em [aistudio.google.com](http
 
 ### 1. Configurar a chave da API (uma vez só)
 
-Vá em **github.com** → clique no seu **avatar** (canto superior direito) → **Settings** → no menu lateral, seção **"Code, planning, and automation"**, clique em **Codespaces** → **Secrets** → **New secret**:
+Primeiro Fork o Projeto e depois vá nas configurações do seu github (não do projeto), ou seja, em **github.com** → clique no seu **avatar** (canto superior direito) → **Settings** → no menu lateral, seção **"Code, planning, and automation"**, clique em **Codespaces** → **Secrets** → **New secret**:
 
 | Campo | Valor |
 |-------|-------|
 | **Name** | `CHAVE_API_GOOGLE` |
 | **Value** | sua chave do Gemini |
 | **Repository access** | selecione o repositório `rag_app` |
+
+Ou renomeie adicione um .env no githubspaces para ter acesso a chave com a Key do gemini, com CHAVE_API_GOOGLE=sua_chave_aqui, se não quiser forkar a repo.
 
 ### 2. Abrir o Codespace
 
